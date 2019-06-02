@@ -46,8 +46,8 @@ html {
   font-weight: 400;
   font-family: 'Open Sans', 'Source Sans Pro', Roboto, 'HelveticaNeue-Light', 'Helvetica Neue Light', 'Helvetica Neue', 'Myriad Pro', 'Segoe UI', Myriad, Helvetica, 'Lucida Grande', 'DejaVu Sans Condensed', 'Liberation Sans', 'Nimbus Sans L', Tahoma, Geneva, Arial, sans-serif;
   -webkit-text-size-adjust: 100%;
-  background: #333333;
-  color: #ffffff;
+  background: #d8dee4;
+  color: #111215;
 }
 body {
   margin: 0;
@@ -97,15 +97,17 @@ a:hover,
 a:focus {
   color: #ffffff;
 }
-input[type="text"] {
-  width: 200px;
+input[type="text"],
+input[type="number"] {
+  width: auto;
   padding: 5px;
   max-width: 100%;
   font-size: 16px;
   line-height: 18px;
   border: none;
 }
-input[type="text"]:focus {
+input[type="text"]:focus,
+input[type="number"]:focus {
   outline: none;
   box-shadow: inset 0 1px 1px rgba(0,0,0,0.75);
   -moz-box-shadow: inset 0 1px 1px rgba(0,0,0,0.75);
@@ -206,23 +208,71 @@ h2.title {
   display: block;
   margin: 10px 0 0 0;
 }
+#week-label {
+  margin-right: 20px;
+}
+#week-label [data-button] {
+  margin: 0;
+}
+#week-label input {
+  height: 36px;
+  position: relative;
+  top: 1px;
+  font-size: 22px;
+  text-align:center;
+}
 /*--- Table ---*/
 .container {
   display: block;
   width: 100%;
-  max-width: 980px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 0 0 30px 0;
-  background: #222222;
+  padding: 0 30px 30px 30px;
+  background: #bbc9d5;
 }
 .container:after {
   content: "";
   display: block;
   clear: both;
 }
-#feeding {
+table#feeding {
   width: 100%;
+  border: 1px solid #204a69;
+  border-collapse: collapse;
+  overflow: hidden;
 }
+table#feeding tr,
+table#feeding td {
+  position: relative;
+  border: 1px solid #204a69;
+  z-index: 2
+}
+table#feeding td {
+  padding: 15px;
+}
+col.active {
+  background: #76d36d;
+}
+#nutes > tr > td:first-of-type {
+  text-align: left;
+}
+#nutes > tr > td > span {
+  margin-left: 5px;
+  font-size: 75%;
+}
+/*table#feeding tr:hover {
+  background-color: green;
+}*/
+/*table#feeding td:hover::after {
+  content: "";
+  position: absolute;
+  background-color: green;
+  left: 0;
+  top: -5000px;
+  height: 10000px;
+  width: 100%;
+  z-index: 1;
+}*/
 </style>
   
 </head>
@@ -240,87 +290,91 @@ h2.title {
     <p>If you like it, you can star it or fork it <a href="https://github.com/avantegarde/wpsnr" target="_blank">over at GitHub</a></p>
   </div> -->
 
+  <label id="week-label">
+    <span data-button>Week</span>
+    <input id="week" type="number" onchange="setActiveWeek(this);" value="1" min="1" max="12">
+  </label>
   <button data-button onclick="switchUnits();">ml/tsp</button>
 
   <div class="container">
     <table id="feeding">
       <caption><h2 class="section-title center">Feeding Chart</h2></caption>
-        <thead>
-            <tr>
-                <th>Nutrient</th>
-                <th>% <small>strength</small></th>
-                <th>Week 1</th>
-                <th>Week 2</th>
-                <th>Week 3</th>
-            </tr>
-        </thead>
-        <tbody id="nutes">
-        </tbody>
+      <colgroup id="columns"></colgroup>
+      <thead id="tablehead"></thead>
+      <tbody id="nutes"></tbody>
     </table>
   </div><!-- .container -->
 
 <script>
 var SAVE_KEY = 'nutes_save';
 /**
-* Save nutes
-* @param nutes
+* Save state
+* @param state
 */
-function save(nutes) {
-  localStorage.setItem(SAVE_KEY, JSON.stringify(nutes));
+function save(state) {
+  localStorage.setItem(SAVE_KEY, JSON.stringify(state));
 }
 /**
-* Load nutes
+* Load state
 */
 function load() {
   return JSON.parse(localStorage.getItem(SAVE_KEY));
 }
-var nutes = load();
-if (nutes) {
-  nutes = nutes;
+var state = load();
+if (state) {
+  state = state;
 } else {
-  var nutes = [
-    {
-      name: 'micro',
-      u: 'ml',
-      p: 100,
-      w1: 2.5,
-      w2: 7.5,
-      w3: 10,
-    },
-    {
-      name: 'gro',
-      u: 'ml',
-      p: 100,
-      w1: 2.5,
-      w2: 10,
-      w3: 10,
-    },
-    {
-      name: 'bloom',
-      u: 'ml',
-      p: 100,
-      w1: 2.5,
-      w2: 2.5,
-      w3: 5,
-    },
-    {
-      name: 'si',
-      u: 'ml',
-      p: 100,
-      w1: 0,
-      w2: 1.5,
-      w3: 2,
-    },
-    {
-      name: 'calmag',
-      u: 'ml',
-      p: 100,
-      w1: 0,
-      w2: 2.5,
-      w3: 5,
-    },
-  ];
-  save(nutes);
+  var state = {
+    week: 1,
+    nutes: [
+      {
+        name: 'micro',
+        u: 'ml',
+        p: 100,
+        m: [2.5, 7.5, 10, 7.5, 7.5, 7.5, 7.5, 7.5, 7.5, 7.5, 5, 0],
+        w1: 2.5,
+        w2: 7.5,
+        w3: 10,
+      },
+      {
+        name: 'gro',
+        u: 'ml',
+        p: 100,
+        m: [2.5, 10, 10, 7.5, 2.5, 2.5, 2.5, 2.5, 0, 0, 0, 0],
+        w1: 2.5,
+        w2: 10,
+        w3: 10,
+      },
+      {
+        name: 'bloom',
+        u: 'ml',
+        p: 100,
+        m: [2.5, 2.5, 5, 7.5, 10, 10, 12.5, 12.5, 15, 15, 15, 0],
+        w1: 2.5,
+        w2: 2.5,
+        w3: 5,
+      },
+      {
+        name: 'si',
+        u: 'ml',
+        p: 100,
+        m: [0, 1.5, 2, 2.5, 2.5, 2.5, 2.5, 2.5, 2, 1.5, 0, 0],
+        w1: 0,
+        w2: 1.5,
+        w3: 2,
+      },
+      {
+        name: 'calmag',
+        u: 'ml',
+        p: 100,
+        m: [0, 2.5, 5, 5, 5, 5, 5, 5, 5, 2.5, 0, 0],
+        w1: 0,
+        w2: 2.5,
+        w3: 5,
+      },
+    ],
+  };
+  save(state);
 }
 function convert(u, x) {
   if (u === 'ml') {
@@ -332,19 +386,24 @@ function convert(u, x) {
   return c;
 }
 function switchUnits() {
+  var nutes = state.nutes;
   for(i=0;i<nutes.length;i++){
-    nutes[i].w1 = convert(nutes[i].u, nutes[i].w1);
+    for (n=0;n<nutes[i].m.length;n++) {
+      nutes[i].m[n] = convert(nutes[i].u, nutes[i].m[n]);
+    }
+    /*nutes[i].w1 = convert(nutes[i].u, nutes[i].w1);
     nutes[i].w2 = convert(nutes[i].u, nutes[i].w2);
-    nutes[i].w3 = convert(nutes[i].u, nutes[i].w3);
+    nutes[i].w3 = convert(nutes[i].u, nutes[i].w3);*/
     if (nutes[i].u === 'tsp') {
       nutes[i].u = 'ml';
     } else if (nutes[i].u === 'ml') {
       nutes[i].u = 'tsp'
     }
   }
-  render(nutes);
+  render(state);
 }
 function setPercent(p, nute) {
+  var nutes = state.nutes;
   var p = p?p.value:100;
   //console.log(nute);
   //console.log(p);
@@ -353,7 +412,7 @@ function setPercent(p, nute) {
       nutes[i].p = p;
     }
   }
-  render(nutes);
+  render(state);
 }
 function percentSelect(p, nute) {
   var choices = [];
@@ -388,32 +447,75 @@ function nuteVal(p, w) {
   //console.log(val);
   return val;
 }
-function autoSelect(nutes) {
+function autoSelect(state) {
+  var nutes = state.nutes;
   for(i=0;i<nutes.length;i++){
     var e = document.getElementById(nutes[i].name);
     e.value = nutes[i].p;
   }
+  var week = document.getElementById('week');
+  week.value = state.week;
+  
 }
-function render (nutes) {
-  //var p = p?p:100;
+function renderColgroup(nutes) {
+  var colgroup = document.getElementById('columns');
+  var columns = '';
+  var totalCol = nutes[0].m.length + 2
+  for (w=0;w<totalCol;w++) {
+    columns += '<col span="1" class="week' + (w+1) +'">';
+  }
+  colgroup.innerHTML = columns;
+}
+function renderTableHead(nutes) {
+  var thead = document.getElementById('tablehead');
+  var tableHead = '' +
+  '<tr>' +
+  '  <th>Nutrient</th>' +
+  '  <th>Strength</th>';
+  for (w=0;w<nutes[0].m.length;w++) {
+    tableHead += '<th>Week ' + (w+1) +'</th>';
+  }
+  tableHead += '</tr>'
+  thead.innerHTML = tableHead;
+}
+function renderTableBody(nutes) {
   var tbody = document.getElementById('nutes');
-  var output = '';
+  var tableBody = '';
   for(i=0;i<nutes.length;i++){
-    //console.log(nutes[i]);
-    output += '' +
+    tableBody += '' +
     '<tr>' +
     '  <td>'+ nutes[i].name +'</td>' +
-    '  <td>' + percentSelect(nutes[i].p, nutes[i].name) + '</td>' +
-    '  <td>' + nuteVal(nutes[i].p, nutes[i].w1) + nutes[i].u +'</td>' +
-    '  <td>' + nuteVal(nutes[i].p, nutes[i].w2) + nutes[i].u +'</td>' +
-    '  <td>' + nuteVal(nutes[i].p, nutes[i].w3) + nutes[i].u +'</td>' +
-    '</tr>';
+    '  <td>' + percentSelect(nutes[i].p, nutes[i].name) + '</td>';
+    for (n=0;n<nutes[i].m.length;n++) {
+      tableBody += '<td>' + nuteVal(nutes[i].p, nutes[i].m[n]) + '<span>' + nutes[i].u + '</span>' +'</td>';
+    }
+    tableBody += '</tr>';
   }
-  tbody.innerHTML = output;
-  autoSelect(nutes);
-  save(nutes);
+  tbody.innerHTML = tableBody;
 }
-render(nutes);
+function setActiveWeek(week) {
+  var week = week?week.value:1;
+  state.week = week;
+  render(state);
+}
+function highlightWeek(week) {
+  var columns = document.querySelectorAll('#columns col');
+  var column = document.querySelectorAll('#columns .week'+ (week+2));
+  for (i=0;i<columns.length;i++) {
+    columns[i].classList.remove('active');
+  }
+  column[0].classList.add('active');
+}
+function render (state) {
+  var nutes = state.nutes;
+  renderColgroup(nutes);
+  renderTableHead(nutes);
+  renderTableBody(nutes);
+  autoSelect(state);
+  highlightWeek(parseInt(state.week));
+  save(state);
+}
+render(state);
 </script>
 </body>
 </html>
