@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+<meta charset=utf-8>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name=apple-mobile-web-app-capable content=yes>
+<meta name=apple-mobile-web-app-status-bar-style content=black>
+<meta name=format-detection content="telephone=no">
+<meta name=viewport content="width=device-width, initial-scale=1">
+<title>Feeding Chart</title>
+
+  <meta name=description content="Simple WordPress SQL search and replace tool.">
+  <meta name=keywords content="WordPress, wp, wordpress, snr, search and replace, search & replace, database, sql, db, search, replace">
+  <meta name=apple-mobile-web-app-title content="WordPress SQL Update Queries">
+  <link rel=apple-touch-icon href=favicon.png>
+
+  <meta property="og:title" content="WordPress SQL Update Queries | WP SQL SNR">
+  <meta property="og:type" content=website>
+  <meta property="og:url" content=https://wpsnr.com>
+  <meta property="og:image" content=favicon.png>
+  <meta property="og:description" content="Simple WordPress SQL search and replace tool.">
+
+  <meta name="twitter:title" content="WordPress SQL Update Queries | WP SQL SNR">
+  <meta name="twitter:creator" content="@The_KL">
+  <meta name="twitter:card" content=summary>
+  <meta name="twitter:image" content=favicon.png>
+  <meta name="twitter:description" content="Simple WordPress SQL search and replace tool.">
+
+  <link type=image/x-icon rel="shortcut icon" href=favicon.png>
+
+<style type="text/css">
+*,
+*:before,
+*:after {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-kerning: auto;
+}
+html {
+  font-size: 1em;
+  line-height: 1.4;
+  font-weight: 400;
+  font-family: 'Open Sans', 'Source Sans Pro', Roboto, 'HelveticaNeue-Light', 'Helvetica Neue Light', 'Helvetica Neue', 'Myriad Pro', 'Segoe UI', Myriad, Helvetica, 'Lucida Grande', 'DejaVu Sans Condensed', 'Liberation Sans', 'Nimbus Sans L', Tahoma, Geneva, Arial, sans-serif;
+  -webkit-text-size-adjust: 100%;
+  background: #333333;
+  color: #ffffff;
+}
+body {
+  margin: 0;
+  padding-bottom: 30px;
+  position: relative;
+  text-align: center;
+}
+h1 {
+    display: block;
+    margin: 20px auto 10px auto;
+}
+p.intro {
+    display: block;
+    width: 550px;
+    max-width: 100%;
+    margin: 0 auto 15px auto;
+    padding: 0 15px;
+}
+h3 {
+  position: relative;
+  display: block;
+  width: 200px;
+  max-width: 100%;
+  margin: auto;
+  padding: 15px;
+  background: #0073a4;
+  color: #ffffff;
+}
+h3:before {
+  content: "";
+  display: block;
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-left: 10px solid #333333;
+  position: absolute;
+  top: calc(50% - 10px);
+  left: 0;
+}
+a,
+a:visited {
+  color: #0073a4;
+}
+a:hover,
+a:focus {
+  color: #ffffff;
+}
+input[type="text"] {
+  width: 200px;
+  padding: 5px;
+  max-width: 100%;
+  font-size: 16px;
+  line-height: 18px;
+  border: none;
+}
+input[type="text"]:focus {
+  outline: none;
+  box-shadow: inset 0 1px 1px rgba(0,0,0,0.75);
+  -moz-box-shadow: inset 0 1px 1px rgba(0,0,0,0.75);
+  -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.75);
+}
+.output-title {
+    margin-bottom: -1px;
+    padding: 5px;
+    background: #222222;
+    border: 1px solid #000000;
+    border-bottom: none;
+}
+.output-title:before {
+    display: none;
+}
+#output {
+  display: block;
+  width: 90%;
+  max-width: 100%;
+  min-height: 120px;
+  margin: auto;
+  padding: 15px 15px 50px 15px;
+  text-align: left;
+  background: #222222;
+  border: 1px solid #000000;
+}
+span {
+  display: block;
+  font-size: 12px;
+  font-style: italic;
+  color: #cccccc;
+}
+/*---------------------*
+ *------ Buttons ------*
+ *---------------------*/
+[data-button],
+[data-button]:visited {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  width: auto;
+  margin: .5em auto;
+  padding: .4em 1.5em .36em 1.5em;
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+  cursor: pointer;
+  background: #0073a4;
+  font-weight: 600;
+  font-kerning: auto;
+  text-decoration: none !important;
+  text-align: center;
+  font-size: 1.25em;
+  line-height: 1;
+  color: #ffffff !important;
+  text-transform: none;
+  border: none;
+  border-top: 1px solid transparent;
+    border-left: 1px solid transparent;
+  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+  -webkit-box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+  border-radius: 0;
+  text-shadow: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+    transition: all 0.3s ease-in-out;
+    -moz-transition: all 0.3s ease-in-out;
+    -webkit-transition: all 0.3s ease-in-out;
+}
+[data-button]:hover,
+[data-button]:focus {
+  background: #0f5d7e;
+  box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.5);
+  -webkit-box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.5);
+  border-top: 1px solid rgba(0, 0, 0, 0.25);
+  border-left: 1px solid rgba(0, 0, 0, 0.25);
+}
+[data-button]:active {
+  background: #15485e;
+  box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.75);
+  -webkit-box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.75);
+  border-top: 1px solid rgba(0, 0, 0, 0.5);
+  border-left: 1px solid rgba(0, 0, 0, 0.5);
+}
+[data-button="local"] {
+  display: inline-block;
+  width: 56px;
+  height: 28px;
+  margin: 0 -5px 0 -56px;
+  padding: 0;
+  font-size: 12px;
+  line-height: 20px;
+  vertical-align: top;
+}
+[data-button="more-info"] {
+  font-size: 16px;
+  line-height: 20px;
+}
+#more-info {
+  display: block;
+  width: 650px;
+  max-height: 0px;
+  max-width: 100%;
+  margin: 0 auto 30px auto;
+  padding: 0 15px;
+  overflow: hidden;
+  opacity: 0;
+  transition: all 0.3s ease-in-out;
+  -webkit-transition: all 0.3s ease-in-out;
+}
+#more-info.active {
+  opacity: 1;
+  max-height: 500px;
+}
+h2.title {
+  display: block;
+  margin: 10px 0 0 0;
+}
+/*--- Table ---*/
+.container {
+  display: block;
+  width: 100%;
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 0 0 30px 0;
+  background: #222222;
+}
+.container:after {
+  content: "";
+  display: block;
+  clear: both;
+}
+#feeding {
+  width: 100%;
+}
+</style>
+  
+</head>
+<body>
+
+  <h1>Feeding Chart</h1>
+  <!-- <p class="intro">Use this tool to help migrate or change your WordPress domain by doing a simple SQL search and replace on your database.</p>
+  <p><em><sup>*</sup>Backup your database before running a search and replace.<sup>*</sup></em></p>
+  <button data-button="more-info" onclick="moreInfo()">More info &#9662;</button>
+  <div id="more-info">
+    <h2 class="title">WordPress Database Switcheroo</h2>
+    <p><em><sup>*</sup>Yes I'll say it again; Backup your database before working on it. <br>It's always a sad day if/when something goes wrong.<sup>*</sup></em></p>
+    <p>Are you looking to do a mass search and replace in WordPress? This tool is designed to change the domain name and urls including the content. Simply add your database prefix, current site url, and new site url into the form and click submit. Copy the output and run it as an SQL command on your database.</p>
+    <p>You might want to consider doing multiple runs with both <em>"http://"</em> and <em>"https://"</em> versions of your domain if you are trying to fix mixed content urls.</p>
+    <p>If you like it, you can star it or fork it <a href="https://github.com/avantegarde/wpsnr" target="_blank">over at GitHub</a></p>
+  </div> -->
+
+  <button data-button onclick="switchUnits();">ml/tsp</button>
+
+  <div class="container">
+    <table id="feeding">
+      <caption><h2 class="section-title center">Feeding Chart</h2></caption>
+        <thead>
+            <tr>
+                <th>Nutrient</th>
+                <th>% <small>strength</small></th>
+                <th>Week 1</th>
+                <th>Week 2</th>
+                <th>Week 3</th>
+            </tr>
+        </thead>
+        <tbody id="nutes">
+        </tbody>
+    </table>
+  </div><!-- .container -->
+
+<script>
+var SAVE_KEY = 'nutes_save';
+/**
+* Save nutes
+* @param nutes
+*/
+function save(nutes) {
+  localStorage.setItem(SAVE_KEY, JSON.stringify(nutes));
+}
+/**
+* Load nutes
+*/
+function load() {
+  return JSON.parse(localStorage.getItem(SAVE_KEY));
+}
+var nutes = load();
+if (nutes) {
+  nutes = nutes;
+} else {
+  var nutes = [
+    {
+      name: 'micro',
+      u: 'ml',
+      p: 100,
+      w1: 2.5,
+      w2: 7.5,
+      w3: 10,
+    },
+    {
+      name: 'gro',
+      u: 'ml',
+      p: 100,
+      w1: 2.5,
+      w2: 10,
+      w3: 10,
+    },
+    {
+      name: 'bloom',
+      u: 'ml',
+      p: 100,
+      w1: 2.5,
+      w2: 2.5,
+      w3: 5,
+    },
+    {
+      name: 'si',
+      u: 'ml',
+      p: 100,
+      w1: 0,
+      w2: 1.5,
+      w3: 2,
+    },
+    {
+      name: 'calmag',
+      u: 'ml',
+      p: 100,
+      w1: 0,
+      w2: 2.5,
+      w3: 5,
+    },
+  ];
+  save(nutes);
+}
+function convert(u, x) {
+  if (u === 'ml') {
+    var c = x * 0.20;
+  } else if (u === 'tsp') {
+    var c = x / 0.20;
+  }
+  c = c.toFixed(2);
+  return c;
+}
+function switchUnits() {
+  for(i=0;i<nutes.length;i++){
+    nutes[i].w1 = convert(nutes[i].u, nutes[i].w1);
+    nutes[i].w2 = convert(nutes[i].u, nutes[i].w2);
+    nutes[i].w3 = convert(nutes[i].u, nutes[i].w3);
+    if (nutes[i].u === 'tsp') {
+      nutes[i].u = 'ml';
+    } else if (nutes[i].u === 'ml') {
+      nutes[i].u = 'tsp'
+    }
+  }
+  render(nutes);
+}
+function setPercent(p, nute) {
+  console.log(nute);
+  var p = p?p.value:100;
+  console.log(p);
+  for(i=0;i<nutes.length;i++){
+    if (nutes[i].name === nute) {
+      nutes[i].p = p;
+    }
+  }
+  render(nutes);
+}
+function percentSelect(p, nute) {
+  var select = '' +
+  "<select id="+nute+" name='aa' onchange=setPercent(this,'"+nute+"')>" +
+  '  <option value="100">100%</option>' +
+  '  <option value="50">50%</option>' +
+  '  <option value="25">25%</option>' +
+  '</select>';
+  return select;
+}
+function nuteVal(p, w) {
+  var val = (p / 100) * w;
+  console.log(val);
+  return val;
+}
+function autoSelect(nutes) {
+  for(i=0;i<nutes.length;i++){
+    var e = document.getElementById(nutes[i].name);
+    e.value = nutes[i].p;
+  }
+}
+function render (nutes) {
+  //var p = p?p:100;
+  var tbody = document.getElementById('nutes');
+  var output = '';
+  for(i=0;i<nutes.length;i++){
+    //console.log(nutes[i]);
+    output += '' +
+    '<tr>' +
+    '  <td>'+ nutes[i].name +'</td>' +
+    '  <td>' + percentSelect(nutes[i].p, nutes[i].name) + '</td>' +
+    '  <td>' + nuteVal(nutes[i].p, nutes[i].w1) + nutes[i].u +'</td>' +
+    '  <td>' + nuteVal(nutes[i].p, nutes[i].w2) + nutes[i].u +'</td>' +
+    '  <td>' + nuteVal(nutes[i].p, nutes[i].w3) + nutes[i].u +'</td>' +
+    '</tr>';
+  }
+  tbody.innerHTML = output;
+  autoSelect(nutes);
+  save(nutes);
+}
+render(nutes);
+</script>
+</body>
+</html>
