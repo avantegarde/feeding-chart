@@ -41,19 +41,23 @@
   font-kerning: auto;
 }
 html {
+  height: 100%;
   font-size: 1em;
   line-height: 1.4;
   font-weight: 400;
   font-family: 'Open Sans', 'Source Sans Pro', Roboto, 'HelveticaNeue-Light', 'Helvetica Neue Light', 'Helvetica Neue', 'Myriad Pro', 'Segoe UI', Myriad, Helvetica, 'Lucida Grande', 'DejaVu Sans Condensed', 'Liberation Sans', 'Nimbus Sans L', Tahoma, Geneva, Arial, sans-serif;
   -webkit-text-size-adjust: 100%;
-  background: #d8dee4;
-  color: #111215;
+  background: rgb(95,195,228);
+  color: #ffffff;
+  background: linear-gradient(-45deg, rgba(229,93,135,.7), rgba(95,195,228,.7)),
+    url(bg3.jpg) center center / cover no-repeat;
 }
 body {
   margin: 0;
   padding-bottom: 30px;
   position: relative;
   text-align: center;
+  text-shadow: 0 1px 5px #000000;
 }
 h1 {
     display: block;
@@ -228,7 +232,7 @@ h2.title {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 30px 30px 30px;
-  background: #bbc9d5;
+  
 }
 .container:after {
   content: "";
@@ -240,6 +244,13 @@ table#feeding {
   border: 1px solid #204a69;
   border-collapse: collapse;
   overflow: hidden;
+  background: rgba(255,255,255,0.75);
+  color: #000000;
+  text-shadow: 0 1px 5px #ffffff;
+}
+table#feeding .section-title {
+  color: #ffffff;
+  text-shadow: 0 1px 5px #000000;
 }
 table#feeding tr,
 table#feeding td {
@@ -251,7 +262,8 @@ table#feeding td {
   padding: 15px;
 }
 col.active {
-  background: #76d36d;
+  /*background: rgba(170,255,0,0.5);*/
+  background: rgba(118,211,109,0.5);
 }
 #nutes > tr > td:first-of-type {
   text-align: left;
