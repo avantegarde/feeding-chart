@@ -41,7 +41,7 @@
   font-kerning: auto;
 }
 html {
-  height: 100%;
+  min-height: 100%;
   font-size: 1em;
   line-height: 1.4;
   font-weight: 400;
@@ -192,12 +192,12 @@ input[type="number"]:focus {
   font-size: 16px;
   line-height: 20px;
 }
-/*#more-info {
+#more-info {
   display: block;
   width: 650px;
   max-height: 0px;
   max-width: 100%;
-  margin: 0 auto 30px auto;
+  margin: 0 auto;
   padding: 0 15px;
   overflow: hidden;
   opacity: 0;
@@ -207,7 +207,12 @@ input[type="number"]:focus {
 #more-info.active {
   opacity: 1;
   max-height: 500px;
-}*/
+}
+#more-info ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
 h2.title {
   display: block;
   margin: 10px 0 0 0;
@@ -262,7 +267,6 @@ table#feeding td {
   padding: 15px;
 }
 col.active {
-  /*background: rgba(170,255,0,0.5);*/
   background: rgba(118,211,109,0.5);
 }
 #nutes > tr > td:first-of-type {
@@ -272,41 +276,32 @@ col.active {
   margin-left: 5px;
   font-size: 75%;
 }
-/*table#feeding tr:hover {
-  background-color: green;
-}*/
-/*table#feeding td:hover::after {
-  content: "";
-  position: absolute;
-  background-color: green;
-  left: 0;
-  top: -5000px;
-  height: 10000px;
-  width: 100%;
-  z-index: 1;
-}*/
 </style>
   
 </head>
 <body>
 
   <h1>Feeding Chart</h1>
-  <!-- <p class="intro">Use this tool to help migrate or change your WordPress domain by doing a simple SQL search and replace on your database.</p>
-  <p><em><sup>*</sup>Backup your database before running a search and replace.<sup>*</sup></em></p>
-  <button data-button="more-info" onclick="moreInfo()">More info &#9662;</button>
-  <div id="more-info">
-    <h2 class="title">WordPress Database Switcheroo</h2>
-    <p><em><sup>*</sup>Yes I'll say it again; Backup your database before working on it. <br>It's always a sad day if/when something goes wrong.<sup>*</sup></em></p>
-    <p>Are you looking to do a mass search and replace in WordPress? This tool is designed to change the domain name and urls including the content. Simply add your database prefix, current site url, and new site url into the form and click submit. Copy the output and run it as an SQL command on your database.</p>
-    <p>You might want to consider doing multiple runs with both <em>"http://"</em> and <em>"https://"</em> versions of your domain if you are trying to fix mixed content urls.</p>
-    <p>If you like it, you can star it or fork it <a href="https://github.com/avantegarde/wpsnr" target="_blank">over at GitHub</a></p>
-  </div> -->
 
   <label id="week-label">
     <span data-button>Week</span>
     <input id="week" type="number" onchange="setActiveWeek(this);" value="1" min="1" max="12">
   </label>
   <button data-button onclick="switchUnits();">ml/tsp</button>
+  <br>
+  <button data-button="more-info" onclick="moreInfo()">More info &#9662;</button>
+  <div id="more-info">
+    <ul>
+        <li>Never premix nutrients</li>
+        <li>Add nutrients in order listed above</li>
+        <li>Add all nutrients before adjusting PH</li>
+        <li>PH 5.8 during Veg. PH 6.1 during Flower</li>
+        <li>Change reservoir every 7-10 days</li>
+        <li>Repeat Week 3 for a longer vegetative period</li>
+        <li>Repeat Week 8 for a longer flowering stage</li>
+        <li>CalMag required in coco or when using RO/low ppm water</li>
+      </ul>
+  </div>
 
   <div class="container">
     <table id="feeding">
@@ -340,6 +335,24 @@ if (state) {
     week: 1,
     nutes: [
       {
+        name: 'si',
+        u: 'ml',
+        p: 100,
+        m: [0, 1.5, 2, 2.5, 2.5, 2.5, 2.5, 2.5, 2, 1.5, 0, 0],
+        w1: 0,
+        w2: 1.5,
+        w3: 2,
+      },
+      {
+        name: 'calmag',
+        u: 'ml',
+        p: 100,
+        m: [0, 2.5, 5, 5, 5, 5, 5, 5, 5, 2.5, 0, 0],
+        w1: 0,
+        w2: 2.5,
+        w3: 5,
+      },
+      {
         name: 'micro',
         u: 'ml',
         p: 100,
@@ -366,24 +379,6 @@ if (state) {
         w2: 2.5,
         w3: 5,
       },
-      {
-        name: 'si',
-        u: 'ml',
-        p: 100,
-        m: [0, 1.5, 2, 2.5, 2.5, 2.5, 2.5, 2.5, 2, 1.5, 0, 0],
-        w1: 0,
-        w2: 1.5,
-        w3: 2,
-      },
-      {
-        name: 'calmag',
-        u: 'ml',
-        p: 100,
-        m: [0, 2.5, 5, 5, 5, 5, 5, 5, 5, 2.5, 0, 0],
-        w1: 0,
-        w2: 2.5,
-        w3: 5,
-      },
     ],
   };
   save(state);
@@ -403,9 +398,6 @@ function switchUnits() {
     for (n=0;n<nutes[i].m.length;n++) {
       nutes[i].m[n] = convert(nutes[i].u, nutes[i].m[n]);
     }
-    /*nutes[i].w1 = convert(nutes[i].u, nutes[i].w1);
-    nutes[i].w2 = convert(nutes[i].u, nutes[i].w2);
-    nutes[i].w3 = convert(nutes[i].u, nutes[i].w3);*/
     if (nutes[i].u === 'tsp') {
       nutes[i].u = 'ml';
     } else if (nutes[i].u === 'ml') {
@@ -417,8 +409,6 @@ function switchUnits() {
 function setPercent(p, nute) {
   var nutes = state.nutes;
   var p = p?p.value:100;
-  //console.log(nute);
-  //console.log(p);
   for(i=0;i<nutes.length;i++){
     if (nutes[i].name === nute) {
       nutes[i].p = p;
@@ -456,7 +446,6 @@ function percentSelect(p, nute) {
 }
 function nuteVal(p, w) {
   var val = (p / 100) * w;
-  //console.log(val);
   return val;
 }
 function autoSelect(state) {
@@ -485,7 +474,11 @@ function renderTableHead(nutes) {
   '  <th>Nutrient</th>' +
   '  <th>Strength</th>';
   for (w=0;w<nutes[0].m.length;w++) {
-    tableHead += '<th>Week ' + (w+1) +'</th>';
+    if (w+1 <= 3) {
+      tableHead += '<th>V ' + (w+1) +'</th>';
+    } else {
+      tableHead += '<th>F ' + (w-2) +'</th>';
+    }
   }
   tableHead += '</tr>'
   thead.innerHTML = tableHead;
@@ -496,7 +489,7 @@ function renderTableBody(nutes) {
   for(i=0;i<nutes.length;i++){
     tableBody += '' +
     '<tr>' +
-    '  <td>'+ nutes[i].name +'</td>' +
+    '  <td><strong>'+ nutes[i].name +'</strong></td>' +
     '  <td>' + percentSelect(nutes[i].p, nutes[i].name) + '</td>';
     for (n=0;n<nutes[i].m.length;n++) {
       tableBody += '<td>' + nuteVal(nutes[i].p, nutes[i].m[n]) + '<span>' + nutes[i].u + '</span>' +'</td>';
@@ -528,6 +521,14 @@ function render (state) {
   save(state);
 }
 render(state);
+function moreInfo() {
+  var more_info = document.getElementById('more-info');
+  if(more_info.classList.contains('active')) {
+      more_info.classList.remove('active');
+  } else {
+      more_info.classList.add('active');
+  }
+}
 </script>
 </body>
 </html>
