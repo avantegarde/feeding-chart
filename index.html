@@ -330,6 +330,16 @@ function load() {
 var state = load();
 if (state) {
   state = state;
+  if (state.nutes.length < 6) {
+    state.nutes.push(
+      {
+        name: 'enzymes',
+        u: 'g',
+        p: 100,
+        m: [0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25],
+      },
+    );
+  }
 } else {
   var state = {
     week: 1,
@@ -339,45 +349,36 @@ if (state) {
         u: 'ml',
         p: 100,
         m: [0, 1.5, 2, 2.5, 2.5, 2.5, 2.5, 2.5, 2, 1.5, 0, 0],
-        w1: 0,
-        w2: 1.5,
-        w3: 2,
       },
       {
         name: 'calmag',
         u: 'ml',
         p: 100,
         m: [0, 2.5, 5, 5, 5, 5, 5, 5, 5, 2.5, 0, 0],
-        w1: 0,
-        w2: 2.5,
-        w3: 5,
       },
       {
         name: 'micro',
         u: 'ml',
         p: 100,
         m: [2.5, 7.5, 10, 7.5, 7.5, 7.5, 7.5, 7.5, 7.5, 7.5, 5, 0],
-        w1: 2.5,
-        w2: 7.5,
-        w3: 10,
       },
       {
         name: 'gro',
         u: 'ml',
         p: 100,
         m: [2.5, 10, 10, 7.5, 2.5, 2.5, 2.5, 2.5, 0, 0, 0, 0],
-        w1: 2.5,
-        w2: 10,
-        w3: 10,
       },
       {
         name: 'bloom',
         u: 'ml',
         p: 100,
         m: [2.5, 2.5, 5, 7.5, 10, 10, 12.5, 12.5, 15, 15, 15, 0],
-        w1: 2.5,
-        w2: 2.5,
-        w3: 5,
+      },
+      {
+        name: 'enzymes',
+        u: 'g',
+        p: 100,
+        m: [0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25],
       },
     ],
   };
@@ -396,7 +397,9 @@ function switchUnits() {
   var nutes = state.nutes;
   for(i=0;i<nutes.length;i++){
     for (n=0;n<nutes[i].m.length;n++) {
-      nutes[i].m[n] = convert(nutes[i].u, nutes[i].m[n]);
+      if (nutes[i].name != 'enzymes') {
+        nutes[i].m[n] = convert(nutes[i].u, nutes[i].m[n]);
+      }
     }
     if (nutes[i].u === 'tsp') {
       nutes[i].u = 'ml';
