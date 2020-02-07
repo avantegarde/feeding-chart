@@ -288,6 +288,7 @@ col.active {
     <input id="week" type="number" onchange="setActiveWeek(this);" value="1" min="1" max="12">
   </label>
   <button data-button onclick="switchUnits();">ml/tsp</button>
+  <button data-button onclick="switchMedium();">dwc/coco</button>
   <br>
   <button data-button="more-info" onclick="moreInfo()">More info &#9662;</button>
   <div id="more-info">
@@ -305,7 +306,7 @@ col.active {
 
   <div class="container">
     <table id="feeding">
-      <caption><h2 class="section-title center">Feeding Chart</h2></caption>
+      <caption><h2 class="section-title center">Feeding Chart | <span id="medium">dwc</span></h2></caption>
       <colgroup id="columns"></colgroup>
       <thead id="tablehead"></thead>
       <tbody id="nutes"></tbody>
@@ -328,59 +329,86 @@ function load() {
   return JSON.parse(localStorage.getItem(SAVE_KEY));
 }
 var state = load();
+var cocoNutes = [
+  {
+    name: 'si',
+    u: 'ml',
+    p: 100,
+    m: [0, 0.5, 1, 1, 1.5, 1.5, 1.5, 1.5, 1.5, 1, 0.5, 0],
+  },
+  {
+    name: 'calmag',
+    u: 'ml',
+    p: 100,
+    m: [5, 5, 5, 5, 4, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 0],
+  },
+  {
+    name: 'micro',
+    u: 'ml',
+    p: 100,
+    m: [1.25, 2.25, 2.25, 2.5, 2.25, 2.5, 2.5, 2.25, 2.25, 2.25, 2.25, 1],
+  },
+  {
+    name: 'gro',
+    u: 'ml',
+    p: 100,
+    m: [0.6, 2.25, 2.25, 2.5, 2.25, 1, 1, 0.5, 0.5, 0, 0, 0],
+  },
+  {
+    name: 'bloom',
+    u: 'ml',
+    p: 100,
+    m: [0.6, 0.6, 1, 1.2, 2.25, 2.5, 2.5, 3, 3, 4, 4, 4],
+  },
+];
+var dwcNutes = [
+  {
+    name: 'si',
+    u: 'ml',
+    p: 50,
+    m: [0, 1.5, 2, 2.5, 2.5, 2.5, 2.5, 2.5, 2, 1.5, 0, 0],
+  },
+  {
+    name: 'calmag',
+    u: 'ml',
+    p: 50,
+    m: [0, 2.5, 5, 5, 5, 5, 5, 5, 5, 2.5, 0, 0],
+  },
+  {
+    name: 'micro',
+    u: 'ml',
+    p: 50,
+    m: [2.5, 7.5, 10, 7.5, 7.5, 7.5, 7.5, 7.5, 7.5, 7.5, 5, 0],
+  },
+  {
+    name: 'gro',
+    u: 'ml',
+    p: 50,
+    m: [2.5, 10, 10, 7.5, 2.5, 2.5, 2.5, 2.5, 0, 0, 0, 0],
+  },
+  {
+    name: 'bloom',
+    u: 'ml',
+    p: 50,
+    m: [2.5, 2.5, 5, 7.5, 10, 10, 12.5, 12.5, 15, 15, 15, 0],
+  },
+  {
+    name: 'enzymes',
+    u: 'g',
+    p: 50,
+    m: [0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25],
+  },
+];
 if (state) {
   state = state;
-  if (state.nutes.length < 6) {
-    state.nutes.push(
-      {
-        name: 'enzymes',
-        u: 'g',
-        p: 100,
-        m: [0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25],
-      },
-    );
+  if (!state.medium) {
+    state.medium = 'dwc';
   }
 } else {
   var state = {
     week: 1,
-    nutes: [
-      {
-        name: 'si',
-        u: 'ml',
-        p: 100,
-        m: [0, 1.5, 2, 2.5, 2.5, 2.5, 2.5, 2.5, 2, 1.5, 0, 0],
-      },
-      {
-        name: 'calmag',
-        u: 'ml',
-        p: 100,
-        m: [0, 2.5, 5, 5, 5, 5, 5, 5, 5, 2.5, 0, 0],
-      },
-      {
-        name: 'micro',
-        u: 'ml',
-        p: 100,
-        m: [2.5, 7.5, 10, 7.5, 7.5, 7.5, 7.5, 7.5, 7.5, 7.5, 5, 0],
-      },
-      {
-        name: 'gro',
-        u: 'ml',
-        p: 100,
-        m: [2.5, 10, 10, 7.5, 2.5, 2.5, 2.5, 2.5, 0, 0, 0, 0],
-      },
-      {
-        name: 'bloom',
-        u: 'ml',
-        p: 100,
-        m: [2.5, 2.5, 5, 7.5, 10, 10, 12.5, 12.5, 15, 15, 15, 0],
-      },
-      {
-        name: 'enzymes',
-        u: 'g',
-        p: 100,
-        m: [0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25],
-      },
-    ],
+    medium: 'dwc',
+    nutes: dwcNutes,
   };
   save(state);
 }
@@ -409,6 +437,16 @@ function switchUnits() {
   }
   render(state);
 }
+function switchMedium() {
+  if(state.medium === 'dwc') {
+    state.medium = 'coco';
+    state.nutes = cocoNutes;
+  } else {
+    state.medium = 'dwc';
+    state.nutes = dwcNutes;
+  }
+  render(state);
+}
 function setPercent(p, nute) {
   var nutes = state.nutes;
   var p = p?p.value:100;
@@ -431,25 +469,11 @@ function percentSelect(p, nute) {
     select += '<option value="'+choices[j]+'">'+choices[j]+'%</option>';
   }
   select += '</select>';
-  /*var select = '' +
-  "<select id="+nute+" name='aa' onchange=setPercent(this,'"+nute+"')>" +
-  '  <option value="100">100%</option>' +
-  '  <option value="50">50%</option>' +
-  '  <option value="45">45%</option>' +
-  '  <option value="40">40%</option>' +
-  '  <option value="35">35%</option>' +
-  '  <option value="30">30%</option>' +
-  '  <option value="25">25%</option>' +
-  '  <option value="20">20%</option>' +
-  '  <option value="15">15%</option>' +
-  '  <option value="10">10%</option>' +
-  '  <option value="5">05%</option>' +
-  '</select>';*/
   return select;
 }
 function nuteVal(p, w) {
   var val = (p / 100) * w;
-  return val;
+  return val.toFixed(2);
 }
 function autoSelect(state) {
   var nutes = state.nutes;
@@ -514,8 +538,13 @@ function highlightWeek(week) {
   }
   column[0].classList.add('active');
 }
+function renderTableTitle(){
+  let title = document.getElementById('medium');
+  title.innerHTML = state.medium;
+}
 function render (state) {
   var nutes = state.nutes;
+  renderTableTitle();
   renderColgroup(nutes);
   renderTableHead(nutes);
   renderTableBody(nutes);
