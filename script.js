@@ -1,4 +1,4 @@
-var SAVE_KEY = 'nutes_save';
+var SAVE_KEY = 'nutes_save_v2';
 /**
 * Save state
 * @param state
