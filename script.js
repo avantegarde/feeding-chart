@@ -242,7 +242,7 @@ function autoSelect(state) {
  * Render the column group for week highlight
  * @param {obj} nutes 
  */
-function renderColgroup(nutes) {
+/*function renderColgroup(nutes) {
   var colgroup = document.getElementById('columns');
   var columns = '';
   var totalCol = nutes[0].m.length + 2
@@ -250,12 +250,12 @@ function renderColgroup(nutes) {
     columns += '<col span="1" class="week' + (w+1) +'">';
   }
   colgroup.innerHTML = columns;
-}
+}*/
 /**
  * Render the nutrient table Header
  * @param {obj} nutes 
  */
-function renderTableHead(nutes) {
+/*function renderTableHeadOLD(nutes) {
   var thead = document.getElementById('tablehead');
   var tableHead = '' +
   '<tr>' +
@@ -274,12 +274,12 @@ function renderTableHead(nutes) {
   }
   tableHead += '</tr>'
   thead.innerHTML = tableHead;
-}
+}*/
 /**
  * Render the nutrient table body
  * @param {obj} nutes 
  */
-function renderTableBody(nutes) {
+/*function renderTableBodyOLD(nutes) {
   var tbody = document.getElementById('nutes');
   var tableBody = '';
   for(i=0;i<nutes.length;i++){
@@ -293,6 +293,52 @@ function renderTableBody(nutes) {
     tableBody += '</tr>';
   }
   tbody.innerHTML = tableBody;
+}*/
+/**
+ * Render the nutrient table Header
+ * @param {obj} nutes 
+ */
+function renderTableHead(nutes) {
+  var thead = document.getElementById('tablehead');
+  var tableHead = '' +
+  '<tr>' +
+  '  <th>Week</th>';
+  for(i=0;i<nutes.length;i++){
+    tableHead += '<th><strong>'+ nutes[i].name +'</strong></th>';
+  }
+  tableHead += '</tr>'
+  thead.innerHTML = tableHead;
+}
+/**
+ * Render the nutrient table body
+ * @param {obj} nutes 
+ */
+function renderTableBody(nutes) {
+  var tbody = document.getElementById('nutes');
+  var tableBody = '' +
+  '<tr>' +
+  '  <td><strong>Power</strong></td>';
+  for(i=0;i<nutes.length;i++){
+    tableBody += '<td>' + percentSelect(nutes[i].p, nutes[i].name) + '</td>';
+  }
+  tableBody += '</tr>';
+  for (w=0;w<nutes[0].m.length;w++) {
+    tableBody += '<tr>';
+    var vegWeeks = (state.medium === 'coco')?4:3;
+    var week = (vegWeeks === 4)?w-1:w;
+    if (w+1 === 1 && vegWeeks === 4) {
+      tableBody += '<td><strong class="seedling">S ' + (week+1) +'</strong></td>';
+    } else if (w+1 <= vegWeeks) {
+      tableBody += '<td><strong class="veg">V ' + (week+1) +'</strong></td>';
+    } else {
+      tableBody += '<td><strong class="flower">F ' + (week-2) +'</strong></td>';
+    }
+    for(i=0;i<nutes.length;i++){
+      tableBody += '<td>' + nuteVal(nutes[i], nutes[i].m[w]) + '<span>' + nutes[i].u + '</span>' +'</td>';
+    }
+    tableBody += '</tr>';
+  }
+  tbody.innerHTML = tableBody;
 }
 /**
  * Set the active week
@@ -300,6 +346,12 @@ function renderTableBody(nutes) {
  */
 function setActiveWeek(week) {
   var week = week?week.value:1;
+  if (week < 0) {
+    week = 0;
+  }
+  if (week > 12) {
+    week = 12;
+  }
   state.week = week;
   render(state);
 }
@@ -308,12 +360,15 @@ function setActiveWeek(week) {
  * @param {int} week 
  */
 function highlightWeek(week) {
-  var columns = document.querySelectorAll('#columns col');
-  var column = document.querySelectorAll('#columns .week'+ (week+2));
-  for (i=0;i<columns.length;i++) {
-    columns[i].classList.remove('active');
+  //var columns = document.querySelectorAll('#columns col');
+  //var column = document.querySelectorAll('#columns .week'+ (week+2));
+  var nuteweeks = document.querySelectorAll('#nutes tr');
+  for (i=0;i<nuteweeks.length;i++) {
+    nuteweeks[i].classList.remove('active');
+    if((week+1) === i) {
+      nuteweeks[i].classList.add('active');
+    }
   }
-  column[0].classList.add('active');
 }
 /**
  * Render the nutrient table title
@@ -369,7 +424,7 @@ function render (state) {
   updateMaxWeeks();
   renderMoreInfo(state.medium);
   renderTableTitle();
-  renderColgroup(nutes);
+  //renderColgroup(nutes);
   renderTableHead(nutes);
   renderTableBody(nutes);
   autoSelect(state);

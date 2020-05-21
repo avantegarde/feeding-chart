@@ -264,9 +264,10 @@ table#feeding td {
   z-index: 2
 }
 table#feeding td {
-  padding: 15px;
+  padding: 10px;
 }
-col.active {
+col.active,
+#nutes > tr.active {
   background: rgba(118,211,109,0.5);
 }
 #nutes > tr > td:first-of-type {
@@ -275,6 +276,48 @@ col.active {
 #nutes > tr > td > span {
   margin-left: 5px;
   font-size: 75%;
+}
+strong.seedling {
+  color: #18a018;
+}
+strong.veg {
+  color: green;
+}
+strong.flower {
+  color: red;
+}
+@media screen and (max-width: 625px) {
+  table#feeding td {
+    padding: 5px;
+  }
+}
+@media screen and (max-width: 550px) {
+  .container {
+    padding: 0;
+  }
+  table#feeding {
+    font-size: 75%;
+  }
+  #nutes > tr > td > span {
+    font-size: 50%;
+  }
+  table#feeding td select {
+    font-size: 25%;
+  }
+}
+@media screen and (max-width: 400px) {
+  table#feeding {
+    font-size: 60%;
+  }
+  table#feeding strong {
+    font-size: 50%;
+  }
+  #nutes > tr > td > span {
+    font-size: 25%;
+  }
+  table#feeding td select {
+    width: 38px;
+  }
 }
 </style>
   
@@ -285,7 +328,7 @@ col.active {
 
   <label id="week-label">
     <span data-button>Week</span>
-    <input id="week" type="number" onchange="setActiveWeek(this);" value="1" min="1" max="12">
+    <input id="week" type="number" onchange="setActiveWeek(this);" value="0" min="0" max="12">
   </label>
   <button data-button onclick="switchUnits();">ml/tsp</button>
   <br>
